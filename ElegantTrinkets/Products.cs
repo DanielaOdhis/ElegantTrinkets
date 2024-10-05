@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElegantTrinkets
 {
-    internal class Products <T>
+    internal class Products<T>
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -9,7 +9,7 @@ namespace ElegantTrinkets
     {
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Welcome to Elegant Trinkets Beauty Store ;)!!\n");
+            Console.WriteLine("Welcome to Elegant Trinkets Beauty Store ;)!!");
 
             List<Products<string>> products = new List<Products<string>>()
             {
@@ -19,45 +19,14 @@ namespace ElegantTrinkets
             };
 
             ShoppingCart<Products<string>> cart = new ShoppingCart<Products<string>>();
-
             bool continueShopping = true;
 
             while (continueShopping)
             {
-                Console.WriteLine("\nSelect a product: ");
-                for (int i = 0; i < products.Count; i++)
-                {
-                    Console.WriteLine($"{i + 1}.{products[i].Name}-ksh{products[i].Price}");
-                }
-
-                int chosenProductIndex = int.Parse(Console.ReadLine()) - 1;
-                Products<string> chosenProduct = products[chosenProductIndex];
-
-                Console.WriteLine("How many units would you like?");
-                int quantityToAdd = int.Parse(Console.ReadLine());
-
-                Console.WriteLine("Do you want to add or remove product? (add/remove)");
-                string choice = Console.ReadLine().ToLower();
-
-                if (choice == "add")
-                {
-                    await cart.AddProductAsync(chosenProduct, quantityToAdd);
-                    Console.WriteLine("Successfully added to cart :)");
-                }
-                else if (choice == "remove")
-                {
-                    await cart.RemoveProductAsync(chosenProduct);
-                    Console.WriteLine("Successfully removed from cart :)");
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Choice");
-                }
-
-                // Ask if the user wants to do anything else
-                Console.WriteLine("\nWould you like to do anything else?");
+                // Display the main  menu
+                Console.WriteLine("\nHow will we help you today?");
                 Console.WriteLine("1. View cart");
-                Console.WriteLine("2. Add/Remove more products");
+                Console.WriteLine("2. View products");
                 Console.WriteLine("3. Checkout and Exit");
 
                 string nextAction = Console.ReadLine();
@@ -65,24 +34,56 @@ namespace ElegantTrinkets
                 switch (nextAction)
                 {
                     case "1":
+                        // View cart
                         Console.WriteLine("Cart Items:");
                         foreach (var item in cart.GetItems())
                         {
-                            Console.WriteLine($"{item.product.Name}-ksh{item.product.Price} ({item.quantityAdded} units) ({item.product.AdditionalInfo})");
+                            Console.WriteLine($"{item.product.Name} - ksh{item.product.Price} ({item.quantityAdded} units) ({item.product.AdditionalInfo})");
                         }
                         Console.WriteLine("Total: ksh " + cart.GetPrice());
                         break;
 
                     case "2":
-                        // Continue shopping (loop will repeat)
+                        // View products and allow add/remove
+                        Console.WriteLine("\nSelect a product: ");
+                        for (int i = 0; i < products.Count; i++)
+                        {
+                            Console.WriteLine($"{i + 1}. {products[i].Name} - ksh{products[i].Price}");
+                        }
+
+                        int chosenProductIndex = int.Parse(Console.ReadLine()) - 1;
+                        Products<string> chosenProduct = products[chosenProductIndex];
+
+                        Console.WriteLine("Do you want to add or remove product? (add/remove)");
+                        string choice = Console.ReadLine().ToLower();
+
+                        if (choice == "add")
+                        {
+                            Console.WriteLine("How many units would you like to add?");
+                            int quantityToAdd = int.Parse(Console.ReadLine());
+                            await cart.AddProductAsync(chosenProduct, quantityToAdd);
+                            Console.WriteLine("Successfully added to cart :)");
+                        }
+                        else if (choice == "remove")
+                        {
+                            Console.WriteLine("How many units would you like to remove?");
+                            int quantityToRemove = int.Parse(Console.ReadLine());
+                            await cart.RemoveProductAsync(chosenProduct, quantityToRemove);
+                            Console.WriteLine("Successfully removed from cart :)");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid Choice");
+                        }
                         break;
 
                     case "3":
+                        // Checkout and Exit
                         Console.WriteLine("Checking out...");
                         Console.WriteLine("Cart Items:");
                         foreach (var item in cart.GetItems())
                         {
-                            Console.WriteLine($"{item.product.Name}-ksh{item.product.Price} ({item.quantityAdded} units) ({item.product.AdditionalInfo})");
+                            Console.WriteLine($"{item.product.Name} - ksh{item.product.Price} ({item.quantityAdded} units) ({item.product.AdditionalInfo})");
                         }
                         Console.WriteLine("Total: ksh " + cart.GetPrice());
                         Console.WriteLine("Thank you for shopping at Elegant Trinkets Beauty Store!");
@@ -90,7 +91,7 @@ namespace ElegantTrinkets
                         break;
 
                     default:
-                        Console.WriteLine("Invalid option, returning to the menu...");
+                        Console.WriteLine("Invalid option, please choose again.");
                         break;
                 }
             }

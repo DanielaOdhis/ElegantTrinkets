@@ -12,12 +12,14 @@ namespace ElegantTrinkets
 
         public async Task AddProductAsync(T product, int quantityToAdd)
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 var item = items.FirstOrDefault(i => i.product.Id == product.Id);
                 if (item.product != null)
                 {
                     // Update the quantity if the item is already in the cart
-                    item.quantityAdded += quantityToAdd;
+                    var updatedItem = (item.product, item.quantityAdded + quantityToAdd);
+                    items[items.IndexOf(item)] = updatedItem;
                 }
                 else
                 {
@@ -27,9 +29,26 @@ namespace ElegantTrinkets
             });
         }
 
-        public async Task RemoveProductAsync(T product)
+        public async Task RemoveProductAsync(T product, int quantityToRemove)
         {
-            await Task.Run(() => items.RemoveAll(i => i.product.Id == product.Id));
+            await Task.Run(() =>
+            {
+                var item = items.FirstOrDefault(i => i.product.Id == product.Id);
+                if (item.product != null)
+                {
+                    if (item.quantityAdded > quantityToRemove)
+                    {
+                        // Decrease the quantity
+                        var updatedItem = (item.product, item.quantityAdded - quantityToRemove);
+                        items[items.IndexOf(item)] = updatedItem;
+                    }
+                    else
+                    {
+                        // Remove the item if the quantity becomes zero or less
+                        items.Remove(item);
+                    }
+                }
+            });
         }
 
         public List<(T product, int quantityAdded)> GetItems()
